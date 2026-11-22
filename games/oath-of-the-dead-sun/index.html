@@ -1,0 +1,79 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Oath of the Dead Sun</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Crimson+Pro:wght@400;600&display=swap">
+<style>
+:root { --ground:#07060a; --ink:#e9dfc6; --dim:#8f8576; --ember:#c9772f; --bar:#2a2430; }
+html, body { margin:0; padding:0; height:100%; background:var(--ground); color:var(--ink); overflow:hidden; }
+#canvas { display:block; width:100vw; height:100vh; background:var(--ground); }
+#canvas:focus { outline:none; }
+#status { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; background:var(--ground); font-family:'Crimson Pro', Georgia, serif; text-align:center; padding:24px; }
+#status h1 { font-family:'Cinzel', Georgia, serif; font-weight:600; font-size:clamp(28px, 6vw, 56px); letter-spacing:0.08em; margin:0; color:var(--ink); text-wrap:balance; }
+#status p { margin:0; font-size:18px; color:var(--dim); max-width:38ch; line-height:1.4; }
+#bar { width:min(420px, 70vw); height:4px; background:var(--bar); border-radius:2px; overflow:hidden; }
+#bar i { display:block; height:100%; width:0%; background:var(--ember); transition:width .2s; }
+#note { display:none; font-size:16px; color:var(--ember); max-width:48ch; }
+#hint { font-size:14px; color:var(--dim); letter-spacing:0.12em; text-transform:uppercase; }
+#click { display:none; font-family:'Cinzel', Georgia, serif; font-size:18px; letter-spacing:0.14em; color:var(--ink); background:none; border:1px solid var(--dim); padding:12px 28px; cursor:pointer; }
+#click:focus-visible { outline:2px solid var(--ember); }
+@media (prefers-reduced-motion: reduce) { #bar i { transition:none; } }
+</style>
+<canvas id="canvas">Your browser does not support the canvas tag.</canvas>
+<div id="status">
+  <h1>Oath of the Dead Sun</h1>
+  <p>A knight. A forest without a sun. A sword that was never meant to be found.</p>
+  <div id="bar"><i id="fill"></i></div>
+  <div id="hint">Loading the forest</div>
+  <button id="click" type="button">Enter the forest</button>
+  <div id="note"></div>
+</div>
+<script>
+(function () {
+  const PARTS = {"index.wasm": ["bin/index_wasm_0.wasm", "bin/index_wasm_1.wasm", "bin/index_wasm_2.wasm"], "index.pck": ["bin/index_pck_0.wasm"]};
+  const origFetch = window.fetch.bind(window);
+  window.fetch = async function (input, init) {
+    const url = typeof input === 'string' ? input : (input && input.url) || '';
+    for (const key in PARTS) {
+      if (url.endsWith(key)) {
+        const bufs = await Promise.all(PARTS[key].map(p => origFetch(p).then(r => { if (!r.ok) throw new Error('Failed to load ' + p); return r.arrayBuffer(); })));
+        const type = key.endsWith('.wasm') ? 'application/wasm' : 'application/octet-stream';
+        const blob = new Blob(bufs, { type });
+        return new Response(blob, { status: 200, headers: { 'Content-Type': type, 'Content-Length': String(blob.size) } });
+      }
+    }
+    return origFetch(input, init);
+  };
+})();
+</script>
+<script src="index.js"></script>
+<script>
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":false,"executable":"index","experimentalVK":false,"fileSizes":{"index.wasm": 39514754, "index.pck": 7122420},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const engine = new Engine(GODOT_CONFIG);
+(function () {
+  const status = document.getElementById('status');
+  const fill = document.getElementById('fill');
+  const hint = document.getElementById('hint');
+  const note = document.getElementById('note');
+  const btn = document.getElementById('click');
+  function fail(err) {
+    console.error(err);
+    note.textContent = (err && err.message) ? err.message : String(err);
+    note.style.display = 'block';
+    hint.textContent = 'Could not start';
+  }
+  const missing = Engine.getMissingFeatures({ threads: false });
+  if (missing.length) { fail('This browser is missing: ' + missing.join(', ')); return; }
+  function start() {
+    btn.style.display = 'none';
+    hint.textContent = 'Loading the forest';
+    engine.startGame({
+      onProgress: function (cur, total) { if (cur > 0 && total > 0) fill.style.width = Math.round(cur / total * 100) + '%'; }
+    }).then(function () { status.remove(); document.getElementById('canvas').focus(); }, fail);
+  }
+  // A click first so the browser allows audio, then the music can start with the title screen.
+  hint.textContent = 'Headphones recommended';
+  btn.style.display = 'inline-block';
+  btn.addEventListener('click', start);
+})();
+</script>
+
+</body></html>

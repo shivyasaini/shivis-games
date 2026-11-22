@@ -1,0 +1,75 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Cat Café</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<style>:root { padding: 0 !important; } html, body { height: 100%; }</style>
+<div id="stage">
+    <canvas id="game"></canvas>
+
+    <div id="hud">
+      <div class="hud-left">
+        <div class="pill" id="coins"><span class="icon">🪙</span><span id="coins-val">0</span></div>
+        <div class="pill" id="clock"><span class="icon">☀️</span><span id="clock-val">8:00</span></div>
+        <div class="pill" id="day"><span class="icon">📅</span>Day <span id="day-val">1</span></div>
+      </div>
+      <div class="hud-right">
+        <div class="pill soft" id="rep"><span class="icon">⭐</span><span id="rep-val">0</span></div>
+        <button class="btn alt" id="btn-music" title="Music on/off">🎵</button>
+        <button class="btn alt" id="btn-sfx" title="Sound effects on/off">🔔</button>
+        <button class="btn alt" id="btn-mode" title="Who carries drinks to the table">Waiters: Cats 🐾</button>
+        <button class="btn" id="btn-shop">Shop</button>
+        <button class="btn" id="btn-cats">Cats</button>
+        <button class="btn" id="btn-menu">Menu</button>
+        <button class="btn alt" id="btn-help" title="How the game works">?</button>
+      </div>
+    </div>
+
+    <div id="orders"></div>
+
+    <div id="toast"></div>
+
+    <div id="panel" class="hidden">
+      <div class="panel-head">
+        <h2 id="panel-title">Cats</h2>
+        <button class="btn ghost" id="panel-close">✕</button>
+      </div>
+      <div id="panel-body"></div>
+    </div>
+
+    <div id="kitchen" class="hidden">
+      <div class="k-head">
+        <div><div id="k-title">☕ Latte</div><div id="k-sub">for table 1</div></div>
+        <button class="btn ghost" id="k-close">✕</button>
+      </div>
+      <div id="k-steps"></div>
+      <div id="k-stage"></div>
+      <div id="k-hint"></div>
+    </div>
+
+    <div id="intro" class="hidden">
+      <div class="intro-card">
+        <div class="intro-head">
+          <div class="intro-cats">🐈 🐈‍⬛ 🐈</div>
+          <h1>Welcome to your Cat Café</h1>
+          <p>A cozy little place where you make the drinks and the cats do the rest.</p>
+        </div>
+        <ol class="intro-steps">
+          <li><span class="n">1</span><div><b>Customers wander in</b> and mumble an order. A ticket appears at the bottom.</div></li>
+          <li><span class="n">2</span><div><b>Click the ticket to make it yourself.</b> Pick, grind, pour, bake, stir. Land in the green zones for ★★★.</div></li>
+          <li><span class="n">3</span><div><b>Your cats carry it to the table</b> on a little tray. Happy customers tip more, especially with a cat beside them.</div></li>
+          <li><span class="n">4</span><div><b>Spend your coins</b> on furniture in the Shop and adopt strays in Cats. Click any cat to pet it. 💕</div></li>
+        </ol>
+        <div class="intro-foot">
+          <span>Open 8 AM to 8 PM · progress saves itself</span>
+          <button class="btn" id="intro-start">Open the café ☕</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="hint">Click an order ticket to brew · your cats carry it to the table · Click a cat to pet it</div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+
+</body></html>
